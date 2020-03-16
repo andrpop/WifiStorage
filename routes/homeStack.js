@@ -2,15 +2,15 @@ import {createStackNavigator} from "react-navigation-stack";
 import {createAppContainer} from "react-navigation";
 import HomeScreen from "../Views/Home";
 import MainView from '../Views/MainView';
-
+import MapScreen from "../Views/MapScreen";
 
 const  screens ={
-    Home: {
-        screen: HomeScreen,
-        navigationOptions: {
-            headerShown: false,
-        },
-    },
+          Home: {
+            screen: HomeScreen,
+            navigationOptions: {
+                headerShown: false,
+            },
+          },
         MainView: {
             screen: MainView,
             navigationOptions: {
@@ -18,7 +18,12 @@ const  screens ={
             },
         },
 
-
+        MapScreen: {
+            screen: MapScreen,
+            navigationOptions: {
+                headerShown: false,
+            },
+        },
 };
 
 

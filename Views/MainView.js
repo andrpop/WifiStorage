@@ -13,7 +13,6 @@ import {
 import wifi from 'react-native-android-wifi';
 import Button from 'react-native-button';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Fumi, Hoshi} from 'react-native-textinput-effects';
 
 
 navigator.geolocation = require('@react-native-community/geolocation');
@@ -63,6 +62,12 @@ export default class MainView extends React.Component {
     this.askForUserPermissions();
   }
 
+  refreshPage() {
+ this.forceUpdate()
+ this.connectionStatusOnPress();
+
+    }
+
   async askForUserPermissions() {
     try {
       const granted = await PermissionsAndroid.request(
@@ -102,9 +107,10 @@ export default class MainView extends React.Component {
               };
               this.setState({markerPosition: initialRegion});
           },
-          (error) => alert(JSON.stringify(error)),
-          {enableHighAccuracy: true, timeout: 2    ,}
+          (error) =>alert(JSON.stringify(error)),
+          {enableHighAccuracy: false, timeout: 100 ,}
       );
+
   }
 
   serviceSetEnableOnPress(enabled){
@@ -229,6 +235,7 @@ export default class MainView extends React.Component {
 
                     <View style={styles.wrap}>
                         {this.state.status===false &&
+                        <View style={styles.notConnected}>
                         <View style={styles.mesaj} >
                             <Image
                                 style={styles.checkButton}
@@ -237,6 +244,28 @@ export default class MainView extends React.Component {
                             <Text style={styles.infonc}>
                                 Nu sunteti conectat!
                             </Text>
+                        </View>
+                            <Button
+                                containerStyle={{
+
+                                    height: 50,
+                                    width:130,
+                                    paddingRight: 20,
+                                    justifyContent:'center',
+                                    backgroundColor: '#FFA500',
+                                    borderRadius: 20,
+                                }}
+                                style={{fontSize: 15, color: 'black', fontWeight:'bold'}}
+                                onPress={()=>this.refreshPage()}
+
+                            >
+                                <TouchableHighlight >
+                                    <Image
+                                        style={styles.StartButton}
+                                        source={require('../Images/refresh.png')}
+                                    />
+                                </TouchableHighlight>
+                                Refresh</Button>
                         </View>}
 
                         {this.state.status &&
@@ -307,7 +336,8 @@ export default class MainView extends React.Component {
                                         />
                                     </TouchableHighlight>
                                     INCARCA DATELE</Button>
-                                {/*<Button*/}
+
+                                                                {/*<Button*/}
                                 {/*    containerStyle={{*/}
                                 {/*        // marginTop: -50,*/}
                                 {/*        paddingRight: 30,*/}
@@ -359,7 +389,7 @@ const styles = StyleSheet.create({
         marginLeft:10,
         marginTop:3,
         height:40,
-        backgroundColor: '#FFA500'
+       backgroundColor: '#FFA500'
     },
     buttons: {
 
@@ -391,10 +421,15 @@ const styles = StyleSheet.create({
     },
 
     mesaj: {
-        flexDirection: 'row',
-        justifyContent:'center',
+         flexDirection: 'row',
+        alignItems:'center',
         padding:15,
 
+    },
+    notConnected:{
+        justifyContent:'center',
+        flexDirection:'column',
+        alignItems:'center'
     },
     container: {
         display:'flex',
