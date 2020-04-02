@@ -11,14 +11,19 @@ import {
     StatusBar
 } from 'react-native';
 import Button from 'react-native-button';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import {db} from "./config";
+
+var returnArr = [];
 
 export default class MapScreen extends Component {
 
     map = null;
 
-    constructor(props){
+
+    constructor(props) {
         super(props);
+        // this.getNetworks();
 
 
         this.state = {
@@ -29,22 +34,44 @@ export default class MapScreen extends Component {
                 latitudeDelta: 10.00,
                 longitudeDelta: 5.00
             },
-
+            coord: {
+                latitude: 46.7891292,
+                longitude: 23.5917804,
+            },
             isWifiNetworkEnabled: null,
             ssid: null,
             pass: null,
+            networks: [],
             ssidExist: null,
             currentSSID: null,
             currentBSSID: null,
             wifiList: null,
             modalVisible: false,
-            status:null,
+            status: null,
             level: null,
             ip: null,
         };
 
     }
 
+    componentDidMount(): void {
+        this.getNetworks();
+    }
+
+    getNetworks() {
+        let ref = db.ref('Networks/');
+        ref.on("value", (data) => {
+
+            data.forEach(function (childSnapshot) {
+                var item = childSnapshot.val();
+                item.key = childSnapshot.key;
+                returnArr.push(item);
+            });
+
+            this.setState({networks: returnArr});
+        })
+
+    }
 
     render() {
 
@@ -54,22 +81,34 @@ export default class MapScreen extends Component {
                 <MapView
                     style={styles.map}
                     initialRegion={this.state.initialPosition}
-                />
+                >
+                    {this.state.networks.map((marker, i) => (
+                    <Marker
+
+                        key={i}
+                        coordinate={{
+                            latitude: marker.Latitude,
+                            longitude: marker.Longitude
+                        }}
+                    >
+                        <Image source={require('../Images/point.png')} style={{height: 45, width: 45}}/>
+                        <MapView.Callout>
+                            <TouchableHighlight underlayColor='#dddddd'>
+                                <View style={styles.tooltip}>
+                                    <Text>{marker.LocationName}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        </MapView.Callout>
+                    </Marker>
+                    ))}
+                </MapView>
             </View>
         );
     }
 }
 const styles = StyleSheet.create({
-    // container: {
-    //   flex: 1,
-    //   padding:15,
-    //   backgroundColor: '#F5FCFF',
-    //   marginBottom:100
-    // },
+
     container: {
-        // ...StyleSheet.absoluteFillObject,
-        // justifyContent: 'flex-end',
-        // alignItems: 'center',
         position: 'absolute',
         top: 0,
         left: 0,
@@ -78,6 +117,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
     },
+    tooltip: {
+        width: 120,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20
+    },
     map: {
         position: 'absolute',
         top: 0,
@@ -85,42 +130,42 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
-    row:{
-        flexDirection:'row'
+    row: {
+        flexDirection: 'row'
     },
     title: {
         fontSize: 20,
     },
     instructionsContainer: {
-        padding:15,
+        padding: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#CCCCCC',
     },
     instructionsTitle: {
-        marginBottom:10,
+        marginBottom: 10,
         color: '#333333'
     },
     instructions: {
         color: '#333333'
     },
-    button:{
-        padding:5,
-        width:120,
+    button: {
+        padding: 5,
+        width: 120,
         alignItems: 'center',
-        backgroundColor:'blue',
+        backgroundColor: 'blue',
         marginRight: 15,
     },
-    bigButton:{
-        padding:5,
-        width:180,
+    bigButton: {
+        padding: 5,
+        width: 180,
         alignItems: 'center',
-        backgroundColor:'blue',
+        backgroundColor: 'blue',
         marginRight: 15,
     },
-    buttonText:{
-        color:'white'
+    buttonText: {
+        color: 'white'
     },
-    answer:{
+    answer: {
         marginTop: 5,
     }
 });

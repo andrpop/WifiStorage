@@ -11,11 +11,16 @@ import {
     StatusBar
 } from 'react-native';
 import Button from 'react-native-button';
+import TabNavigator from "./TabNavigator";
 
 export default class HomeScreen extends Component {
 
     constructor(props){
         super(props);
+        console.ignoredYellowBox = [
+            'Setting a timer'
+        ];
+
     }
 
 
@@ -42,7 +47,7 @@ export default class HomeScreen extends Component {
                                 borderRadius: 20,
                             }}
                             style={{fontSize: 15, color: 'black',marginLeft:10}}
-                            onPress={()=>this.props.navigation.navigate('MainView')}
+                            onPress={()=>this.props.navigation.navigate('TabNavigator')}
                         >
                             <TouchableHighlight >
                                 <Image
